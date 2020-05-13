@@ -14,14 +14,17 @@ const connect = MongoClient.connect(process.env.DATABASE_URL)
 
 // db.createCollection('flashcards')
 async function initDb() {
-   return await connect.then(async (client) => {
+   await connect.then(async (client) => {
       const db = client.db('db')
-      await db.dropDatabase()
-      await db.listCollections().toArray().then(arr => {
-         arr.map(c => db.dropDatabase(c.name))
-      })
-      await db.createCollection('flashcards')
-      await db.collection('flashcards').insertMany(shuffleFlashcards())
+      // await db.dropDatabase()
+      // await db.listCollections().toArray().then(arr => {
+      //    arr.map(c => db.dropDatabase(c.name))
+      // })
+      const collection = db.collection('flashcards')
+      if(!collection) {
+         await db.createCollection('flashcards')
+         await db.collection('flashcards').insertMany(shuffleFlashcards())
+      }
    })
 }
 
